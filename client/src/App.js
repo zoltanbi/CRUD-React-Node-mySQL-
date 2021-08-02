@@ -10,7 +10,6 @@ function App() {
 
     useEffect(() => {
         Axios.get("http://localhost:3001/api/get").then((res) => {
-            console.log(res.data)
             setMovieList(res.data);
         });
     }, []);
@@ -19,10 +18,17 @@ function App() {
         Axios.post('http://localhost:3001/api/insert', {
             movieName: movieName,
             movieReview: review,
-        }).then(() => {
-            alert('successful insert');
         })
+
+        setMovieList([
+            ...movieReviewList,
+            {movieName: movieName, movieReview: review},
+        ]);
     };
+
+    const deleteReview = (movieId) => {
+        Axios.delete(`http://localhost:3001/api/delete/${movieId}`);
+    }
 
     return (
         <div className="App">
@@ -49,7 +55,16 @@ function App() {
               <button onClick={submitReview}>Submit</button>
 
               {movieReviewList.map((val) => {
-                  return <h1>MovieName: {val.movie_name} | Movie Review: {val.review}</h1>
+                  return (
+                      <div className="card">
+                          <h1>{val.movie_name}</h1>
+                          <p>{val.review}</p>
+
+                          <button onClick={() => {deleteReview(val.id)}}>Delete</button>
+                          <input type="text" id="updateInput"/>
+                          <button>Update</button>
+                      </div>
+                  )
               })}
           </div>
 
